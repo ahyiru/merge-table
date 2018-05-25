@@ -1,0 +1,22 @@
+table {
+  border-spacing: 0;
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 100%;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  background-color: #fff;
+  overflow: auto;
+  border: 1px solid #ddd;
+  text-align: center;
+  user-select:none;
+}
+th,td{
+  border: 1px solid #ddd;
+}
+td>p{
+  margin:3px 0;
+}
+td>p>span:not(:first-of-type){
+  margin-left:10px;
+}
