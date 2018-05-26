@@ -1,7 +1,5 @@
 const thead=[{name:'id',value:'id'},{name:'name',value:'用户名'},{name:'sex',value:'性别'},{name:'age',value:'年龄'},{name:'city',value:'籍贯'},{name:'job',value:'职业'},{name:'point',value:'特长'},{name:'like',value:'爱好'}];
-
 const tbody=[];
-
 for(let i=0;i<10;i++){
   tbody[i]={};
   thead.map((v,k)=>{
@@ -10,6 +8,35 @@ for(let i=0;i<10;i++){
   });
 }
 console.log(tbody);
+const table=`<table id="table">
+  <thead></thead>
+  <tbody></tbody>
+</table>`;
+const test=document.getElementById('test');
+test.innerHTML=table;
+const tableDom=document.getElementById('table');
+
+const renderThead=()=>{
+  let th='';
+  thead.map((v,k)=>{
+    th+=`<th>${v.value}</th>`;
+  });
+  tableDom.children[0].innerHTML=`<tr>${th}</tr>`;
+};
+renderThead();
+
+const renderTbody=()=>{
+  let tr='';
+  tbody.map((v,k)=>{
+    let td='';
+    Object.keys(v).map((sv,sk)=>{
+      td+=`<td data-key="${k}-${sk}">${v[sv].text}</td>`;
+    });
+    tr+=`<tr>${td}</tr>`;
+  });
+  tableDom.children[1].innerHTML=tr;
+};
+renderTbody();
 
 const getKey=(obj,val)=>{
   let key=null;
@@ -75,6 +102,28 @@ const mergeTable=(start,end)=>{
 
 // console.log(mergeTable('0-0','1-1'));
 
+const hasItem=(arr,item)=>{
+  let hasItem=-1;
+  for(let i=0,items;items=arr[i++];){
+    if(items==item){
+      return hasItem=i;
+    }
+  }
+  return hasItem;
+};
+const filterHead=(head,item)=>{
+  // const tmp=JSON.parse(JSON.stringify(head));
+  let newHead=[];
+  const items=Object.keys(item);
+  head.map((v,k)=>{
+    const hasKey=hasItem(items,v.name);
+    if(hasKey>-1){
+      newHead.push(v);
+    }
+  });
+  return newHead;
+};
+
 const renderTable=(start,end)=>{
   const newTbody=mergeTable(start,end);
   console.log(newTbody);
@@ -85,41 +134,20 @@ const renderTable=(start,end)=>{
   let tr='';
   newTbody.map((v,k)=>{
     let td='';
-    thead.map((sv,sk)=>{
-      if(v[sv.name]){
+    const newThead=filterHead(thead,v);
+    newThead.map((sv,sk)=>{
+      // if(v[sv.name]){
         if(k==s_y&&sk==s_x){
           td+=`<td data-key="${k}-${sk}" colspan="${v[sv.name].colspan}" rowspan="${v[sv.name].rowspan}">${v[sv.name].text}</td>`;
         }else{
           td+=`<td data-key="${k}-${sk}" colspan="${v[sv.name].colspan}" rowspan="${v[sv.name].rowspan}">${v[sv.name].text}</td>`;
         }
-      }
+      // }
     });
     tr+=`<tr>${td}</tr>`;
   });
-  tableDom.children[1].innerHTML=`<tbody>${tr}</tbody>`;
+  tableDom.children[1].innerHTML=tr;
 };
-
-let th='';
-thead.map((v,k)=>{
-  th+=`<th>${v.value}</th>`;
-});
-let tr='';
-tbody.map((v,k)=>{
-  let td='';
-  Object.keys(v).map((sv,sk)=>{
-    td+=`<td data-key="${k}-${sk}">${v[sv].text}</td>`;
-  });
-  tr+=`<tr>${td}</tr>`;
-});
-const table=`<table id="table">
-  <thead><tr>${th}</tr></thead>
-  <tbody>${tr}</tbody>
-</table>`;
-
-const test=document.getElementById('test');
-test.innerHTML=table;
-
-const tableDom=document.getElementById('table');
 
 const getSelect=(start,end)=>{
   let s_x=start.split('-')[0];
@@ -141,8 +169,9 @@ const getSelect=(start,end)=>{
   });
   // console.log(tr);
 };
-let startKey='0-0';
 
+// mouse events
+let startKey='0-0';
 const mousedown=(event)=>{
   let e=event||window.event;
   let ele=e.target||e.srcElement;
@@ -154,7 +183,6 @@ const mousedown=(event)=>{
   tableDom.addEventListener('mousemove',mousemove,false);
   document.addEventListener('mouseup',mouseup,false);
 };
-
 const mousemove=(event)=>{
   let e=event||window.event;
   let ele=e.target||e.srcElement;
@@ -163,9 +191,7 @@ const mousemove=(event)=>{
     let endKey=td.getAttribute('data-key');
     getSelect(startKey,endKey);
   }
-
 };
-
 const mouseup=(event)=>{
   let e=event||window.event;
   let ele=e.target||e.srcElement;
@@ -175,7 +201,6 @@ const mouseup=(event)=>{
     let endKey=td.getAttribute('data-key');
     renderTable(startKey,endKey);
   }
-
   tableDom.removeEventListener('mousemove',mousemove,false);
 };
 
